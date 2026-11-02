@@ -74,12 +74,13 @@ After every change, print the full matrix as a markdown 2x2 table:
 ```markdown
 | | **Urgent** | **Not urgent** |
 | --- | --- | --- |
-| **Important** | **Do**<br>• Fix prod outage<br>• File taxes | **Schedule**<br>• Write report (Fri 14 Nov)<br>• Plan Q1 goals (1 Dec) |
-| **Not important** | **Delegate**<br>• Book venue → Sam | **Eliminate**<br>• Reorganize bookmarks |
+| **Important** | **Do:** Fix prod outage · File taxes | **Schedule:** Write report (Fri 14 Nov) · Plan Q1 goals (1 Dec) |
+| **Not important** | **Delegate:** Book venue → Sam | **Eliminate:** — |
 ```
 
-- Use `<br>• ` between tasks inside a cell.
-- Write `—` in an empty quadrant.
+- Keep each cell on one line. Separate tasks with ` · `.
+- Never use HTML such as `<br>`. Many renderers, including terminals, show it as literal text.
+- Write `—` after the quadrant name in an empty quadrant.
 - Keep task names short. Shorten long names to a few words.
 - Below the table, list completed tasks as `Done: task, task` when any exist.
 
