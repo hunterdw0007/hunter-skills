@@ -36,8 +36,6 @@ cz bump     # bump version, update CHANGELOG.md, tag
 git push --follow-tags   # the pushed tag triggers a GitHub Release with one zip per skill
 ```
 
-Design decisions live in `ADR-*.md` files.
-
 ## License
 
 MIT
