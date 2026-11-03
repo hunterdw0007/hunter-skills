@@ -26,6 +26,16 @@ Copy a skill folder into your skills directory, for example:
 cp -r skills/eisenhower-matrix ~/.claude/skills/
 ```
 
+### Codex
+
+Codex reads the same `SKILL.md` format. Copy a skill folder into your Codex skills directory:
+
+```sh
+cp -r skills/eisenhower-matrix ~/.agents/skills/
+```
+
+Older Codex versions read `~/.codex/skills/` instead. To install a skill for one project only, copy it into `.agents/skills/` in that repo.
+
 ## Contributing
 
 Commits follow [Conventional Commits](https://www.conventionalcommits.org/) via [commitizen](https://commitizen-tools.github.io/commitizen/):
