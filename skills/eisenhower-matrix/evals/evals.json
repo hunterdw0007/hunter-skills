@@ -1,0 +1,116 @@
+{
+  "skill_name": "eisenhower-matrix",
+  "evals": [
+    {
+      "id": 1,
+      "name": "mixed-work-and-home",
+      "prompt": "Help me prioritize: finish Jira ticket PAY-142 (checkout bug, customers can't pay), Jira ticket PAY-150 (refactor logging, no deadline), dust the house, go running.",
+      "expected_output": "Separate Work and Home/Health matrices. PAY-142 in Do, PAY-150 in Schedule (or Eliminate after a question), dusting and running in Schedule. No chore in Eliminate.",
+      "files": [],
+      "expectations": [
+        "Areas: PAY-142 and PAY-150 are Work; dusting is Home; running is Health or Home",
+        "Prints more than one matrix, each under a heading naming its area (e.g. ### Work)",
+        "PAY-142 is in Do",
+        "PAY-150 is in Schedule, Eliminate, or asked about; not in Do",
+        "Dust the house is in Schedule, or asked about; never in Eliminate",
+        "Go running is in Schedule, or asked about; never in Eliminate",
+        "Does not justify a home or health task's quadrant by comparing it to the work tasks"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "single-area",
+      "prompt": "Eisenhower matrix for my work tasks: prod database is down right now, write Q3 design doc for next quarter's roadmap, reply to the vendor survey that marketing forwarded.",
+      "expected_output": "One matrix with no area heading, in the same format as before areas existed.",
+      "files": [],
+      "expectations": [
+        "Areas: all three tasks are Work",
+        "Prints exactly one 2x2 table and no area heading",
+        "Prod database down is in Do",
+        "Q3 design doc is in Schedule",
+        "Vendor survey is in Delegate or Eliminate, or asked about; not in Do"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "clear-cut-tasks",
+      "prompt": "Prioritize these: prod is down and customers are affected, file my taxes which are due tomorrow.",
+      "expected_output": "Both tasks placed in Do with no interview questions.",
+      "files": [],
+      "expectations": [
+        "Areas: prod is Work; taxes is Home, Personal, Finance or similar",
+        "Prod is down is in Do",
+        "File taxes is in Do",
+        "Asks no urgency or importance question about either task"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "due-date-is-not-urgency",
+      "prompt": "Help me prioritize: update the team wiki page, it takes about an hour and is due next month.",
+      "expected_output": "The task is not in Do; Schedule (or a question) is expected.",
+      "files": [],
+      "expectations": [
+        "Areas: wiki page is Work",
+        "The wiki task is not in Do",
+        "If placed, it is in Schedule and the agent asks for a date"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "unclear-area",
+      "prompt": "What should I work on first? Fix the failing CI build blocking the release today, call Sam, buy groceries.",
+      "expected_output": "One batched round of questions that includes the area of 'call Sam'; no separate round just for the area.",
+      "files": [],
+      "expectations": [
+        "Areas: CI build is Work; groceries is Home; call Sam is asked about or guessed",
+        "Fix CI build is in Do with no question about it",
+        "Buy groceries is not in Eliminate",
+        "Any question about the area of 'call Sam' is in the same turn as the other interview questions, not a separate round"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "later-turn-edits",
+      "prompt": "Here is my matrix from earlier:\n\n### Work\n\n| | **Urgent** | **Not urgent** |\n| --- | --- | --- |\n| **Important** | **Do:** Fix login bug | **Schedule:** Write report (Fri 14 Nov) |\n| **Not important** | **Delegate:** Book venue → Sam | **Eliminate:** — |\n\n### Home\n\n| | **Urgent** | **Not urgent** |\n| --- | --- | --- |\n| **Important** | **Do:** — | **Schedule:** Clean gutters (Sat 15 Nov) · Plan vacation (1 Dec) |\n| **Not important** | **Delegate:** — | **Eliminate:** — |\n\nUpdates: I finished the login bug. Remove book venue. Move clean gutters to Do. Plan vacation is actually a work offsite, move it to Work. Add: renew passport, it expires in 3 weeks and I fly in 4.",
+      "expected_output": "Login bug on the Done line, venue gone, gutters in Home Do, offsite under Work in Schedule, passport added under a non-work area (likely Do), full matrices reprinted.",
+      "files": [],
+      "expectations": [
+        "Areas: plan vacation/offsite is now under Work; renew passport is Home, Personal or Travel",
+        "Fix login bug is on a Done: line below the last table and not in any quadrant",
+        "Book venue is gone from every table",
+        "Clean gutters is in Do in the Home table",
+        "Plan vacation/offsite is under Work and keeps Schedule (1 Dec)",
+        "Renew passport is in Do, or asked about once",
+        "Write report keeps Schedule (Fri 14 Nov) and is not re-asked about",
+        "All remaining tables are reprinted in full"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "re-interview",
+      "prompt": "Here is my matrix:\n\n| | **Urgent** | **Not urgent** |\n| --- | --- | --- |\n| **Important** | **Do:** — | **Schedule:** Write report (Fri 14 Nov) · Update resume (1 Dec) |\n| **Not important** | **Delegate:** — | **Eliminate:** — |\n\nMy situation changed for update resume, can you re-interview it?",
+      "expected_output": "Questions about update resume only; write report untouched.",
+      "files": [],
+      "expectations": [
+        "Areas: both tasks stay in one area, so one table with no heading",
+        "Asks at least one urgency or importance question about update resume",
+        "Asks nothing about write report"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "formatting",
+      "prompt": "Help me prioritize: investigate and fix the intermittent timeout errors in the payments service that started after last Tuesday's deploy and are hitting about 2% of checkout requests. That's it for now.",
+      "expected_output": "One table, short task name, empty quadrants shown as —, no HTML.",
+      "files": [],
+      "expectations": [
+        "Areas: payments timeouts is Work",
+        "The task name in the table is shortened to a few words",
+        "Every empty quadrant reads '<Quadrant>:** —' (an em dash after the name)",
+        "Each table cell is on one line and contains no HTML such as <br>",
+        "No Done: line is printed, since nothing is complete"
+      ]
+    }
+  ]
+}
