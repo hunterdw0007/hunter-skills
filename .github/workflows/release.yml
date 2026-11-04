@@ -2,21 +2,44 @@ name: release
 
 on:
   push:
+    branches: [main]
     tags: ["v*"]
 
 permissions:
   contents: write
+
+concurrency: release
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # On main: bump with commitizen if commits since the last tag warrant it.
+      # The tag is pushed with GITHUB_TOKEN, which won't trigger another run, so we release here.
+      - id: bump
+        if: github.ref_type == 'branch'
+        run: |
+          pipx install commitizen==4.19.3
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          before=$(cz version -p)
+          cz --no-raise 3,21 bump --yes  # 3, 21 = nothing to bump
+          after=$(cz version -p)
+          if [ "$after" != "$before" ]; then
+            git push origin HEAD:main "v$after"
+            echo "tag=v$after" >> "$GITHUB_OUTPUT"
+          fi
       # One zip per skill, with the skill folder at the zip root, as claude.ai expects.
-      - run: |
+      - if: github.ref_type == 'tag' || steps.bump.outputs.tag
+        run: |
           mkdir dist
           cd skills
           for d in */; do zip -r "../dist/${d%/}.zip" "$d" -x "*/evals/*"; done
-      - run: gh release create "$GITHUB_REF_NAME" dist/*.zip --title "$GITHUB_REF_NAME" --generate-notes
+      - if: github.ref_type == 'tag' || steps.bump.outputs.tag
+        run: gh release create "$TAG" dist/*.zip --title "$TAG" --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.bump.outputs.tag || github.ref_name }}
