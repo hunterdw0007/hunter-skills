@@ -1,7 +1,7 @@
 # commitizen (https://commitizen-tools.github.io/commitizen/): checks commit messages
 # against Conventional Commits, and works out the next version and its CHANGELOG.md
 # entry from them. CI releases main with it (.github/scripts/release.sh); see "Releases"
-# in README.md.
+# in CONTRIBUTING.md.
 [tool.commitizen]
 name = "cz_conventional_commits"
 # The current version is the newest vX.Y.Z tag. Each release is a "bump:" commit on main

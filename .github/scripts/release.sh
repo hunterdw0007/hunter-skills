@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Releases main's HEAD when the commits since the last release call for a new version
-# (see .cz.toml and "Releases" in README.md). Two steps, so the push token is never in
+# (see .cz.toml and "Releases" in CONTRIBUTING.md). Two steps, so the push token is never in
 # the checkout or in commitizen's process. That's defense in depth, not a boundary: later
 # steps of a job inherit what earlier ones leave ($GITHUB_PATH, $GITHUB_ENV, the
 # workspace). The control is commitizen's hash lock (.github/actions/commitizen).

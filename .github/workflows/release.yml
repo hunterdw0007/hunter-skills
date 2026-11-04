@@ -3,7 +3,7 @@ name: release
 # Every push to main whose commits call for a version bump (feat, fix, "!", ...) is
 # released: a "bump:" commit on main adds its CHANGELOG.md entry and is tagged vX.Y.Z,
 # and a GitHub release is published with one zip per skill. See .github/scripts/release.sh
-# and "Releases" in README.md.
+# and "Releases" in CONTRIBUTING.md.
 on:
   push:
     branches: [main]
