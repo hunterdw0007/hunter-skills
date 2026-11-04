@@ -16,7 +16,7 @@ jobs:
       - run: |
           mkdir dist
           cd skills
-          for d in */; do zip -r "../dist/${d%/}.zip" "$d"; done
+          for d in */; do zip -r "../dist/${d%/}.zip" "$d" -x "*/evals/*"; done
       - run: gh release create "$GITHUB_REF_NAME" dist/*.zip --title "$GITHUB_REF_NAME" --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}

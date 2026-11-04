@@ -1,6 +1,6 @@
 ---
 name: eisenhower-matrix
-description: Sorts tasks into an Eisenhower Matrix (Do, Schedule, Delegate, Eliminate) by guessing each task's quadrant and asking short adaptive questions only about unclear tasks, then prints the matrix as a markdown 2x2 table. Supports adding tasks later, moving, removing, completing, and re-interviewing tasks. Use when the user mentions an "Eisenhower matrix" or asks for help prioritizing tasks, e.g. "help me prioritize these tasks" or "what should I work on first".
+description: Sorts tasks into an Eisenhower Matrix (Do, Schedule, Delegate, Eliminate) by guessing each task's quadrant and asking short adaptive questions only about unclear tasks, then prints the matrix as a markdown 2x2 table, one per area of life (e.g. Work, Home) when the tasks span several. Supports adding tasks later, moving, removing, completing, and re-interviewing tasks. Use when the user mentions an "Eisenhower matrix" or asks for help prioritizing tasks, e.g. "help me prioritize these tasks" or "what should I work on first".
 ---
 
 # Eisenhower Matrix
@@ -13,6 +13,11 @@ Use these definitions. Do not swap in your own.
 
 - **Important**: the task has a meaningful consequence, or it contributes to long-term goals. Use the user's goals only if they have stated them. Never ask the user for their goals.
 - **Urgent**: waiting causes harm or lost options. A due date alone does not make a task urgent. A deadline next month for a one-hour task is not urgent; a window that closes tomorrow is.
+
+Judge every task against its own consequences, never against the other tasks.
+Never move a task to a lower quadrant to make room for another.
+
+Routine upkeep (chores, exercise, errands, health) is at least Schedule unless the user says it doesn't matter.
 
 | | Urgent | Not urgent |
 | --- | --- | --- |
@@ -31,10 +36,13 @@ Keep each task's wording short and stable so it can be matched across turns.
 
 When the user gives one or more tasks:
 
-1. Guess a quadrant for every task from its text and any context the user gave.
-2. Mark each guess as **clear** or **unclear**.
+1. Tag every task with an area of life, such as Work, Home or Health.
+   Pick the areas from the tasks themselves, not from a fixed list.
+   If a task's area is unclear, add one question about it to the interview batch. Do not ask in a separate round.
+2. Guess a quadrant for every task from its text and any context the user gave.
+3. Mark each guess as **clear** or **unclear**.
    A guess is clear only when both urgency and importance are obvious.
-3. Place clear tasks straight away. Do not ask about them.
+4. Place clear tasks straight away. Do not ask about them.
 
 ### 2. Interview the unclear tasks
 
@@ -82,7 +90,9 @@ After every change, print the full matrix as a markdown 2x2 table:
 - Never use HTML such as `<br>`. Many renderers, including terminals, show it as literal text.
 - Write `—` after the quadrant name in an empty quadrant.
 - Keep task names short. Shorten long names to a few words.
-- Below the table, list completed tasks as `Done: task, task` when any exist.
+- If all tasks share one area, print one table with no heading.
+- If tasks span several areas, print one table per area, each under a heading such as `### Work`.
+- Below the last table, list completed tasks as `Done: task, task` when any exist.
 
 ## Asking questions
 
@@ -105,7 +115,8 @@ The user may answer with a number or in their own words.
 
 The user can keep working on the matrix in later messages:
 
-- **Add tasks**: run triage and the interview for the new tasks only.
+- **Add tasks**: run triage (including the area) and the interview for the new tasks only.
+- **Move a task to another area**: keep its quadrant, put it under the area the user names, and reprint.
 - **Move a task**: put it in the quadrant the user names, run that quadrant's follow-up, and reprint.
 - **Remove a task**: drop it from the matrix and reprint.
 - **Complete a task**: move it to the `Done` line and reprint.
