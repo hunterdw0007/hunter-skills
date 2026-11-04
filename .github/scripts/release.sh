@@ -101,6 +101,12 @@ release::publish() {
 	trap 'rm -rf "$body" "$dist"' EXIT
 	{
 		release::notes "$tag"
+		# GitHub adds "Source code (zip)" to every release; it nests SKILL.md too deep for Claude.
+		printf '\n### Install\n\nUpload a skill zip in Claude under **Settings → Capabilities → Skills** (not "Source code", which Claude rejects):\n\n'
+		for d in skills/*/; do
+			d=${d#skills/} d=${d%/}
+			printf -- '- [%s.zip](%s/%s/releases/download/%s/%s.zip)\n' "$d" "$server" "$repo" "$tag" "$d"
+		done
 		if prev=$(git describe --tags --abbrev=0 --match 'v[0-9]*' "$tag^" 2>/dev/null); then
 			printf '\n**Full diff**: %s/%s/compare/%s...%s\n' "$server" "$repo" "$prev" "$tag"
 		fi

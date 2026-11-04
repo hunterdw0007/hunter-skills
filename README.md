@@ -12,7 +12,7 @@ A collection of [Claude Skills](https://docs.claude.com/en/docs/agents-and-tools
 
 ### Claude.ai (web) and Claude Desktop
 
-1. Download the skill's `.zip` (e.g. `eisenhower-matrix.zip`) from the [latest release](https://github.com/hunterdw0007/hunter-skills/releases/latest).
+1. Download the skill's `.zip` (e.g. [`eisenhower-matrix.zip`](https://github.com/hunterdw0007/hunter-skills/releases/latest/download/eisenhower-matrix.zip)) from the [latest release](https://github.com/hunterdw0007/hunter-skills/releases/latest). Don't use the release's "Source code (zip)": Claude rejects it because `SKILL.md` is nested too deep.
 2. In Claude, open **Settings → Capabilities** and make sure **Code execution and file creation** is on.
 3. Under **Skills**, click **Upload skill** and choose the `.zip`.
 
