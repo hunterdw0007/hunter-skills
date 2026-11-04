@@ -1,45 +1,43 @@
 name: release
 
+# Every push to main whose commits call for a version bump (feat, fix, "!", ...) is
+# released: a "bump:" commit on main adds its CHANGELOG.md entry and is tagged vX.Y.Z,
+# and a GitHub release is published with one zip per skill. See .github/scripts/release.sh
+# and "Releases" in README.md.
 on:
   push:
     branches: [main]
-    tags: ["v*"]
 
 permissions:
-  contents: write
-
-concurrency: release
+  contents: read
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write # create the release
+    concurrency:
+      # One at a time, so two quick merges can't both claim a version.
+      group: release
+      cancel-in-progress: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0
-      # On main: bump with commitizen if commits since the last tag warrant it.
-      # The tag is pushed with GITHUB_TOKEN, which won't trigger another run, so we release here.
-      - id: bump
-        if: github.ref_type == 'branch'
-        run: |
-          pipx install commitizen==4.19.3
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          before=$(cz version -p)
-          cz --no-raise 3,21 bump --yes  # 3, 21 = nothing to bump
-          after=$(cz version -p)
-          if [ "$after" != "$before" ]; then
-            git push origin HEAD:main "v$after"
-            echo "tag=v$after" >> "$GITHUB_OUTPUT"
-          fi
-      # One zip per skill, with the skill folder at the zip root, as claude.ai expects.
-      - if: github.ref_type == 'tag' || steps.bump.outputs.tag
-        run: |
-          mkdir dist
-          cd skills
-          for d in */; do zip -r "../dist/${d%/}.zip" "$d" -x "*/evals/*"; done
-      - if: github.ref_type == 'tag' || steps.bump.outputs.tag
-        run: gh release create "$TAG" dist/*.zip --title "$TAG" --generate-notes
+          fetch-depth: 0 # every commit and tag: the bump is worked out from the commits since the last tag
+          # No token left in .git/config: commitizen runs in the next steps, and only the
+          # publish step, which doesn't run it, gets a token.
+          persist-credentials: false
+
+      - uses: ./.github/actions/commitizen
+
+      - name: Bump (commit and tag, locally)
+        run: .github/scripts/release.sh bump
+
+      - name: Push and release
         env:
+          # Not GITHUB_TOKEN: the main and v* tag rulesets only let admins through, so the
+          # push needs a token that can bypass them. Needs Contents: write.
+          PUSH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.bump.outputs.tag || github.ref_name }}
+        run: .github/scripts/release.sh publish
