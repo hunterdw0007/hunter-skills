@@ -1,7 +1,7 @@
 name: commits
 
 # Versions and release notes are worked out from commit messages (see "Releases" in
-# README.md), so every commit in a PR, and the PR title (the commit message when it's
+# CONTRIBUTING.md), so every commit in a PR, and the PR title (the commit message when it's
 # squash-merged), has to be a Conventional Commit.
 on:
   pull_request:
