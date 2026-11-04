@@ -1,22 +1,43 @@
 name: release
 
+# Every push to main whose commits call for a version bump (feat, fix, "!", ...) is
+# released: a "bump:" commit on main adds its CHANGELOG.md entry and is tagged vX.Y.Z,
+# and a GitHub release is published with one zip per skill. See .github/scripts/release.sh
+# and "Releases" in README.md.
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write # create the release
+    concurrency:
+      # One at a time, so two quick merges can't both claim a version.
+      group: release
+      cancel-in-progress: false
     steps:
-      - uses: actions/checkout@v4
-      # One zip per skill, with the skill folder at the zip root, as claude.ai expects.
-      - run: |
-          mkdir dist
-          cd skills
-          for d in */; do zip -r "../dist/${d%/}.zip" "$d" -x "*/evals/*"; done
-      - run: gh release create "$GITHUB_REF_NAME" dist/*.zip --title "$GITHUB_REF_NAME" --generate-notes
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # every commit and tag: the bump is worked out from the commits since the last tag
+          # No token left in .git/config: commitizen runs in the next steps, and only the
+          # publish step, which doesn't run it, gets a token.
+          persist-credentials: false
+
+      - uses: ./.github/actions/commitizen
+
+      - name: Bump (commit and tag, locally)
+        run: .github/scripts/release.sh bump
+
+      - name: Push and release
         env:
+          # Not GITHUB_TOKEN: the main and v* tag rulesets only let admins through, so the
+          # push needs a token that can bypass them. Needs Contents: write.
+          PUSH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/release.sh publish
